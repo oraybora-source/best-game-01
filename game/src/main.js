@@ -161,8 +161,12 @@ function runGame() {
     last = now;
     const actions = handleActions();
     if (screen === SCREEN_TITLE || screen === SCREEN_PLAY) {
+      // The lamp toggle is a one-shot: only the first step in this frame may use it,
+      // or one press would flip the lamp once per simulated step.
+      let stepActions = actions;
       while (accumulator >= STEP && (screen === SCREEN_TITLE || screen === SCREEN_PLAY)) {
-        step(actions);
+        step(stepActions);
+        stepActions &= ~ACTION_LIGHT;
         accumulator -= STEP;
       }
     } else {
